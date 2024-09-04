@@ -9,7 +9,7 @@ TEST(Monitor, TemperatureCritical) {
 
     // Test cases where temperature is in range
     ASSERT_TRUE(vitalsOk(98.6, 75, 95));  // Normal temperature
-    ASSERT_TRUE(vitalsOk(101.9, 75, 95)); // High normal temperature
+    ASSERT_TRUE(vitalsOk(101.9, 75, 95));  // High normal temperature
 }
 
 TEST(Monitor, PulseRateOutOfRange) {
@@ -34,11 +34,11 @@ TEST(Monitor, OxygenSaturationOutOfRange) {
 // Test cases for multiple vitals being off range
 TEST(Monitor, MultipleVitalsOffRange) {
     // Test cases where more than one vital sign is out of range
-    ASSERT_FALSE(vitalsOk(103, 101, 89));   // All vitals out of range
-    ASSERT_FALSE(vitalsOk(95, 50, 80));     // All vitals out of range
+    ASSERT_FALSE(vitalsOk(103, 101, 89));  // All vitals out of range
+    ASSERT_FALSE(vitalsOk(95, 50, 80));  // All vitals out of range
 
-    // Test cases where all vital signs are normal 
-    ASSERT_TRUE(vitalsOk(98.6, 75, 95));    // All vitals within range
+    // Test cases where all vital signs are normal
+    ASSERT_TRUE(vitalsOk(98.6, 75, 95));  // All vitals within range
 }
 
 // General test cases
