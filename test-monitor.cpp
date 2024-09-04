@@ -15,7 +15,7 @@ TEST(Monitor, TemperatureNormal) {
 }
 
 TEST(Monitor, TemperatureHighNormal) {
-    ASSERT_TRUE(vitalsOk(101.9, 75, 95)); // High normal temperature
+    ASSERT_TRUE(vitalsOk(101.9, 75, 95));  // High normal temperature
 }
 
 // Separate test cases for pulse rate being out of range

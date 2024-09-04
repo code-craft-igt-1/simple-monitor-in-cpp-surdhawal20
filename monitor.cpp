@@ -36,9 +36,12 @@ bool isSpo2OutOfRange(float spo2) {
 int vitalsOk(float temperature, float pulseRate, float spo2) {
     // Define a vector of functions that perform the vital checks
     vector<std::tuple<function<bool()>, string>> checks = {
-        { [temperature]() { return isTemperatureCritical(temperature); }, "Temperature is critical!" },
-        { [pulseRate]() { return isPulseRateOutOfRange(pulseRate); }, "Pulse Rate is out of range!" },
-        { [spo2]() { return isSpo2OutOfRange(spo2); }, "Oxygen Saturation out of range!" }
+        { [temperature]() { return isTemperatureCritical(temperature); }, 
+        "Temperature is critical!" },
+        { [pulseRate]() { return isPulseRateOutOfRange(pulseRate); }, 
+        "Pulse Rate is out of range!" },
+        { [spo2]() { return isSpo2OutOfRange(spo2); }, 
+        "Oxygen Saturation out of range!" }
     };
 
     // Iterate through each check and display an alert if the check fails
