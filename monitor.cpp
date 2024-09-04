@@ -3,8 +3,13 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <functional>
+#include <vector>
 
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
+using std::function;
+using std::string;
+using std::vector;
 
 void displayCriticalAlert(const std::string& message) {
     cout << message << "\n";
@@ -29,17 +34,20 @@ bool isSpo2OutOfRange(float spo2) {
 }
 
 int vitalsOk(float temperature, float pulseRate, float spo2) {
-    if (isTemperatureCritical(temperature)) {
-        displayCriticalAlert("Temperature is critical!");
-        return 0;
+    // Define a vector of functions that perform the vital checks
+    vector<std::tuple<function<bool()>, string>> checks = {
+        { [temperature]() { return isTemperatureCritical(temperature); }, "Temperature is critical!" },
+        { [pulseRate]() { return isPulseRateOutOfRange(pulseRate); }, "Pulse Rate is out of range!" },
+        { [spo2]() { return isSpo2OutOfRange(spo2); }, "Oxygen Saturation out of range!" }
+    };
+
+    // Iterate through each check and display an alert if the check fails
+    for (auto& [check, message] : checks) {
+        if (check()) {
+            displayCriticalAlert(message);
+            return 0;
+        }
     }
-    if (isPulseRateOutOfRange(pulseRate)) {
-        displayCriticalAlert("Pulse Rate is out of range!");
-        return 0;
-    }
-    if (isSpo2OutOfRange(spo2)) {
-        displayCriticalAlert("Oxygen Saturation out of range!");
-        return 0;
-    }
+
     return 1;
 }
