@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 
 // Test cases for temperature, pulse rate, and oxygen saturation separately
+
 TEST(Monitor, TemperatureCritical) {
     // Test cases where temperature is out of range
     ASSERT_FALSE(vitalsOk(103, 75, 95));  // High temperature
