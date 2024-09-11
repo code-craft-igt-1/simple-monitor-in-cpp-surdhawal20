@@ -1,56 +1,90 @@
-#include "./monitor.h"
-#include <assert.h>
+#include "monitor.h"
+#include <iostream>
 #include <thread>
 #include <chrono>
-#include <iostream>
-#include <functional>
-#include <vector>
+#include <sstream>
 
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
-using std::function;
-using std::string;
-using std::vector;
 
-void displayCriticalAlert(const std::string& message) {
-    cout << message << "\n";
-    for (int i = 0; i < 6; i++) {
-        cout << "\r* " << flush;
-        sleep_for(seconds(1));
-        cout << "\r *" << flush;
-        sleep_for(seconds(1));
+// Monitor constructor
+Monitor::Monitor(const std::string& language, const std::string& tempUnit)
+    : msgHandler(language), tempUnit(tempUnit) {}
+
+// Unified function to check if a value is within limits (including warning level)
+VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLimit) {
+    constexpr float WARNING_TOLERANCE = 0.985f;  // 1.5% below the upper limit
+    if (value > upperLimit) {
+        return VitalAlertLevel::CRITICAL;
+    }
+    if (value >= upperLimit * WARNING_TOLERANCE) {
+        return VitalAlertLevel::WARNING;
+    }
+    if (value < lowerLimit) {
+        return VitalAlertLevel::CRITICAL;
+    }
+    return VitalAlertLevel::OK;
+}
+
+// Function to check temperature specifically
+VitalAlertLevel Monitor::checkTemperature(float temperature) {
+    if (tempUnit == "C") {
+        temperature = tempConverter.convertToFahrenheit(temperature);
+    }
+    constexpr float TEMPERATURE_LOWER_F = 95.0;
+    constexpr float TEMPERATURE_UPPER_F = 102.0;
+    return checkValue(temperature, TEMPERATURE_LOWER_F, TEMPERATURE_UPPER_F);
+}
+
+// Function to format temperature with the correct unit
+std::string Monitor::formatTemperature(float temperature) {
+    if (tempUnit == "C") {
+        temperature = tempConverter.convertToCelsius(temperature);
+        return tempConverter.to_string_custom(temperature) + " °C";
+    }
+    else {
+        return tempConverter.to_string_custom(temperature) + " °F";
     }
 }
 
-bool isTemperatureCritical(float temperature) {
-    return temperature > 102 || temperature < 95;
+// Function to display alert levels (with language translation)
+void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel level) {
+    if (level == VitalAlertLevel::CRITICAL) {
+        cout << message << "\n";
+        for (int i = 0; i < 6; ++i) {
+            cout << "\r* " << flush;
+            sleep_for(seconds(1));
+            cout << "\r *" << flush;
+            sleep_for(seconds(1));
+        }
+    }
+    else if (level == VitalAlertLevel::WARNING) {
+        cout << "Warning: " << message << "\n";
+    }
 }
 
-bool isPulseRateOutOfRange(float pulseRate) {
-    return pulseRate < 60 || pulseRate > 100;
-}
-
-bool isSpo2OutOfRange(float spo2) {
-    return spo2 < 90;
-}
-
-int vitalsOk(float temperature, float pulseRate, float spo2) {
-    // Define a vector of functions that perform the vital checks
-    vector<std::tuple<function<bool()>, string>> checks = {
-        { [temperature]() { return isTemperatureCritical(temperature); },
-        "Temperature is critical!" },
-        { [pulseRate]() { return isPulseRateOutOfRange(pulseRate); },
-        "Pulse Rate is out of range!" },
-        { [spo2]() { return isSpo2OutOfRange(spo2); },
-        "Oxygen Saturation out of range!" }
+// Function to check all vitals
+int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
+    std::vector<std::tuple<float, float, float, std::string>> checks = {
+        { temperature, 95.0f, 102.0f, "TEMPERATURE" },
+        { pulseRate, 60.0f, 100.0f, "PULSE" },
+        { spo2, 90.0f, 100.0f, "SPO2" }
     };
 
-    // Iterate through each check and display an alert if the check fails
-    for (auto& [check, message] : checks) {
-        if (check()) {
-            displayCriticalAlert(message);
-            return 0;
+    for (const auto& [value, lowerLimit, upperLimit, paramName] : checks) {
+        VitalAlertLevel level = (paramName == "TEMPERATURE") ? checkTemperature(value) : checkValue(value, lowerLimit, upperLimit);
+
+        if (level == VitalAlertLevel::CRITICAL) {
+            // Display alert message using the correct language for critical levels
+            displayAlertLevel(msgHandler.getMessage("CRITICAL_" + paramName) +
+                (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
+            return 0;  // Critical value, return immediately
+        }
+        else if (level == VitalAlertLevel::WARNING) {
+            // Display alert message using the correct language for warning levels
+            displayAlertLevel(msgHandler.getMessage("WARNING_" + paramName) +
+                (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
         }
     }
 
-    return 1;
+    return 1;  // Return 1 if all vitals are OK or in the warning range
 }
