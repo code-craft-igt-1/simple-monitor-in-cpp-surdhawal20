@@ -100,16 +100,31 @@ VitalAlertLevel Monitor::checkVital(float value, float lowerLimit, float upperLi
 
 // Function to process alerts based on the level
 bool Monitor::processAlert(const std::string& paramName, float value, VitalAlertLevel level) {
+    // Mapping of VitalAlertLevel to alert type (critical or warning)
+    static const std::map<VitalAlertLevel, std::string> alertTypeMap = {
+        {VitalAlertLevel::CRITICAL, "CRITICAL_"},
+        {VitalAlertLevel::WARNING, "WARNING_"}
+    };
+
+    // If level is OK, no alert needed, return early
     if (level == VitalAlertLevel::OK) {
-        return true; // No alert needed
+        return true;
     }
 
-    std::string alertType = (level == VitalAlertLevel::CRITICAL) ? "CRITICAL_" : "WARNING_";
-    displayAlertLevel(msgHandler.getMessage(alertType + paramName) +
-        (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
+    // Get the alert type based on level (it will be either CRITICAL_ or WARNING_)
+    std::string alertType = alertTypeMap.at(level);
 
+    // Build the alert message
+    std::string alertMessage = msgHandler.getMessage(alertType + paramName) +
+        (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : "");
+
+    // Display the alert
+    displayAlertLevel(alertMessage, level);
+
+    // Return true for WARNING, false for CRITICAL
     return level != VitalAlertLevel::CRITICAL;
 }
+
 
 // Main function
 int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
