@@ -32,8 +32,14 @@ class Monitor {
     // Helper function to handle critical alert animation
     void displayCriticalAlertAnimation();
 
-    // Function to display alert levels
+    // Function to display alert level
     void displayAlertLevel(const std::string& message, VitalAlertLevel level);
+
+    // Handle individual vital checks and return the appropriate level
+    VitalAlertLevel checkVital(float value, float lowerLimit, float upperLimit, const std::string& paramName);
+
+    // Function to process alerts based on the level
+    bool processAlert(const std::string& paramName, float value, VitalAlertLevel level);
 
     // Helper function to format and display alert messages
     void handleAlert(const std::string& paramName, float value, VitalAlertLevel level);

@@ -88,39 +88,45 @@ void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel leve
     }
 }
 
-// Helper function to format and display alert messages
-void Monitor::handleAlert(const std::string& paramName, float value, VitalAlertLevel level) {
-    std::string messageKey = (level == VitalAlertLevel::CRITICAL) ? "CRITICAL_" : "WARNING_";
-    messageKey += paramName;
-
-    std::string message = msgHandler.getMessage(messageKey);
+// Handle individual vital checks and return the appropriate level
+VitalAlertLevel Monitor::checkVital(float value, float lowerLimit, float upperLimit, const std::string& paramName) {
+    // For temperature, use the checkTemperature function
     if (paramName == "TEMPERATURE") {
-        message += " " + formatTemperature(value);
+        return checkTemperature(value);
     }
-    displayAlertLevel(message, level);
+    // For pulse rate and SpO2, use the generic checkValue function
+    return checkValue(value, lowerLimit, upperLimit);
 }
 
-// Function to check all vitals
+// Function to process alerts based on the level
+bool Monitor::processAlert(const std::string& paramName, float value, VitalAlertLevel level) {
+    if (level == VitalAlertLevel::OK) {
+        return true; // No alert needed
+    }
+
+    std::string alertType = (level == VitalAlertLevel::CRITICAL) ? "CRITICAL_" : "WARNING_";
+    displayAlertLevel(msgHandler.getMessage(alertType + paramName) +
+        (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
+
+    return level != VitalAlertLevel::CRITICAL;
+}
+
+// Main function
 int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
+    // Define the vital checks
     std::vector<std::tuple<float, float, float, std::string>> checks = {
         { temperature, 95.0f, 102.0f, "TEMPERATURE" },
         { pulseRate, 60.0f, 100.0f, "PULSE" },
         { spo2, 90.0f, 100.0f, "SPO2" }
     };
 
+    // Loop through each vital sign, check its value, and process the alert
     for (const auto& [value, lowerLimit, upperLimit, paramName] : checks) {
-        VitalAlertLevel level = (paramName == "TEMPERATURE") 
-            ? checkTemperature(value)
-            :checkValue(value, lowerLimit, upperLimit);
-
-        if (level != VitalAlertLevel::OK) {
-            handleAlert(paramName, value, level);
-
-            if (level == VitalAlertLevel::CRITICAL) {
-                return 0;  // Critical value, return immediately
-            }
+        VitalAlertLevel level = checkVital(value, lowerLimit, upperLimit, paramName);
+        if (!processAlert(paramName, value, level)) {
+            return 0; // Return 0 if a critical alert is detected
         }
     }
 
-    return 1;  // Return 1 if all vitals are OK or in the warning range
+    return 1; // Return 1 if all vitals are OK or only in the warning range
 }
