@@ -16,7 +16,10 @@ VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLi
     if (value > upperLimit) {
         return VitalAlertLevel::CRITICAL;
     }
-    if (value >= upperLimit * WARNING_TOLERANCE) {
+    if (value >= lowerLimit && value <= (lowerLimit + WARNING_TOLERANCE)) {
+        return VitalAlertLevel::WARNING;
+    }
+    if (value >= (upperLimit - WARNING_TOLERANCE) && value <= upperLimit) {
         return VitalAlertLevel::WARNING;
     }
     if (value < lowerLimit) {
