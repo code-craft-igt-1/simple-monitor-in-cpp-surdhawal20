@@ -89,7 +89,7 @@ void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel leve
 }
 
 // Handle individual vital checks and return the appropriate level
-VitalAlertLevel Monitor::checkVital(float value, float lowerLimit, float upperLimit, 
+VitalAlertLevel Monitor::checkVital(float value, float lowerLimit, float upperLimit,
 const std::string& paramName) {
     // For temperature, use the checkTemperature function
     if (paramName == "TEMPERATURE") {
@@ -140,9 +140,9 @@ int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
     for (const auto& [value, lowerLimit, upperLimit, paramName] : checks) {
         VitalAlertLevel level = checkVital(value, lowerLimit, upperLimit, paramName);
         if (!processAlert(paramName, value, level)) {
-            return 0; //  Return 0 if a critical alert is detected
+            return 0;   // Return 0 if a critical alert is detected
         }
     }
 
-    return 1; //  Return 1 if all vitals are OK or only in the warning range
+    return 1;  // Return 1 if all vitals are OK or only in the warning range
 }
