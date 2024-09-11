@@ -15,7 +15,7 @@ VitalAlertLevel checkUpperLimit(float value, float upperLimit, float tolerance) 
     if (value > upperLimit) {
         return VitalAlertLevel::CRITICAL;
     }
-    if (value >= upperLimit - tolerance && value <= upperLimit) {
+    if (value >= upperLimit - tolerance) {
         return VitalAlertLevel::WARNING;
     }
     return VitalAlertLevel::OK;
@@ -26,7 +26,7 @@ VitalAlertLevel checkLowerLimit(float value, float lowerLimit, float tolerance) 
     if (value < lowerLimit) {
         return VitalAlertLevel::CRITICAL;
     }
-    if (value >= lowerLimit && value <= lowerLimit + tolerance) {
+    if (value <= lowerLimit + tolerance) {
         return VitalAlertLevel::WARNING;
     }
     return VitalAlertLevel::OK;
@@ -69,17 +69,22 @@ std::string Monitor::formatTemperature(float temperature) {
     }
 }
 
-// Function to display alert levels (with language translation)
+// Helper function to handle critical alert animation
+void Monitor::displayCriticalAlertAnimation() {
+    for (int i = 0; i < 6; ++i) {
+        cout << "\r* " << flush;
+        sleep_for(seconds(1));
+        cout << "\r *" << flush;
+        sleep_for(seconds(1));
+    }
+}
+
 void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel level) {
     if (level == VitalAlertLevel::CRITICAL) {
         cout << message << "\n";
-        for (int i = 0; i < 6; ++i) {
-            cout << "\r* " << flush;
-            sleep_for(seconds(1));
-            cout << "\r *" << flush;
-            sleep_for(seconds(1));
-        }
-    } else if (level == VitalAlertLevel::WARNING) {
+        displayCriticalAlertAnimation();
+    }
+    else if (level == VitalAlertLevel::WARNING) {
         cout << "Warning: " << message << "\n";
     }
 }

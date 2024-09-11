@@ -29,6 +29,9 @@ class Monitor {
     // Function to display the temperature with the appropriate unit
     std::string formatTemperature(float temperature);
 
+    // Helper function to handle critical alert animation
+    void displayCriticalAlertAnimation();
+
     // Function to display alert levels
     void displayAlertLevel(const std::string& message, VitalAlertLevel level);
 
