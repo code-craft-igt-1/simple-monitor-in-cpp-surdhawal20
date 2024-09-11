@@ -36,7 +36,8 @@ class Monitor {
     void displayAlertLevel(const std::string& message, VitalAlertLevel level);
 
     // Handle individual vital checks and return the appropriate level
-    VitalAlertLevel checkVital(float value, float lowerLimit, float upperLimit, const std::string& paramName);
+    VitalAlertLevel checkVital(float value, float lowerLimit, float upperLimit, 
+    const std::string& paramName);
 
     // Function to process alerts based on the level
     bool processAlert(const std::string& paramName, float value, VitalAlertLevel level);
