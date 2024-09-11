@@ -9,9 +9,9 @@
 
 // Enum for Vital alert levels
 enum class VitalAlertLevel {
-    OK,
-    WARNING,
-    CRITICAL
+    OK = 0,
+    WARNING = 1,
+    CRITICAL = 2
 };
 
 class Monitor {
