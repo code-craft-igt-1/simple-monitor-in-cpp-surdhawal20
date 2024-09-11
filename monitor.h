@@ -35,6 +35,9 @@ class Monitor {
     // Function to display alert levels
     void displayAlertLevel(const std::string& message, VitalAlertLevel level);
 
+    // Helper function to format and display alert messages
+    void handleAlert(const std::string& paramName, float value, VitalAlertLevel level);
+
  public:
     Monitor(const std::string& language, const std::string& tempUnit);
     int vitalsOk(float temperature, float pulseRate, float spo2);

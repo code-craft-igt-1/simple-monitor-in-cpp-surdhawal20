@@ -88,6 +88,18 @@ void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel leve
     }
 }
 
+// Helper function to format and display alert messages
+void Monitor::handleAlert(const std::string& paramName, float value, VitalAlertLevel level) {
+    std::string messageKey = (level == VitalAlertLevel::CRITICAL) ? "CRITICAL_" : "WARNING_";
+    messageKey += paramName;
+
+    std::string message = msgHandler.getMessage(messageKey);
+    if (paramName == "TEMPERATURE") {
+        message += " " + formatTemperature(value);
+    }
+    displayAlertLevel(message, level);
+}
+
 // Function to check all vitals
 int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
     std::vector<std::tuple<float, float, float, std::string>> checks = {
@@ -97,18 +109,16 @@ int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
     };
 
     for (const auto& [value, lowerLimit, upperLimit, paramName] : checks) {
-        VitalAlertLevel level = (paramName == "TEMPERATURE") ? checkTemperature(value) :
-                                checkValue(value, lowerLimit, upperLimit);
+        VitalAlertLevel level = (paramName == "TEMPERATURE") 
+            ? checkTemperature(value)
+            :checkValue(value, lowerLimit, upperLimit);
 
-        if (level == VitalAlertLevel::CRITICAL) {
-            // Display alert message using the correct language for critical levels
-            displayAlertLevel(msgHandler.getMessage("CRITICAL_" + paramName) +
-                (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
-            return 0;  // Critical value, return immediately
-        } else if (level == VitalAlertLevel::WARNING) {
-            // Display alert message using the correct language for warning levels
-            displayAlertLevel(msgHandler.getMessage("WARNING_" + paramName) +
-                (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
+        if (level != VitalAlertLevel::OK) {
+            handleAlert(paramName, value, level);
+
+            if (level == VitalAlertLevel::CRITICAL) {
+                return 0;  // Critical value, return immediately
+            }
         }
     }
 
