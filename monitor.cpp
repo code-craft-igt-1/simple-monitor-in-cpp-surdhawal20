@@ -1,4 +1,4 @@
-#include "monitor.h"
+#include "./monitor.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -15,11 +15,9 @@ VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLi
     constexpr float WARNING_TOLERANCE = 0.985f;  // 1.5% below the upper limit
     if (value > upperLimit) {
         return VitalAlertLevel::CRITICAL;
-    }
-    if (value >= upperLimit * WARNING_TOLERANCE) {
+    } if (value >= upperLimit * WARNING_TOLERANCE) {
         return VitalAlertLevel::WARNING;
-    }
-    if (value < lowerLimit) {
+    } if (value < lowerLimit) {
         return VitalAlertLevel::CRITICAL;
     }
     return VitalAlertLevel::OK;
@@ -40,10 +38,10 @@ std::string Monitor::formatTemperature(float temperature) {
     if (tempUnit == "C") {
         temperature = tempConverter.convertToCelsius(temperature);
         return tempConverter.to_string_custom(temperature) + " °C";
-    }
-    else {
+    } else {
         return tempConverter.to_string_custom(temperature) + " °F";
     }
+   
 }
 
 // Function to display alert levels (with language translation)
@@ -56,8 +54,7 @@ void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel leve
             cout << "\r *" << flush;
             sleep_for(seconds(1));
         }
-    }
-    else if (level == VitalAlertLevel::WARNING) {
+    } else if (level == VitalAlertLevel::WARNING) {
         cout << "Warning: " << message << "\n";
     }
 }
@@ -78,8 +75,7 @@ int Monitor::vitalsOk(float temperature, float pulseRate, float spo2) {
             displayAlertLevel(msgHandler.getMessage("CRITICAL_" + paramName) +
                 (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);
             return 0;  // Critical value, return immediately
-        }
-        else if (level == VitalAlertLevel::WARNING) {
+        } else if (level == VitalAlertLevel::WARNING) {
             // Display alert message using the correct language for warning levels
             displayAlertLevel(msgHandler.getMessage("WARNING_" + paramName) +
                 (paramName == "TEMPERATURE" ? " " + formatTemperature(value) : ""), level);

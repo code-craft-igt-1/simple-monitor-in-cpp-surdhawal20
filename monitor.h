@@ -1,5 +1,5 @@
-#ifndef MONITOR_H
-#define MONITOR_H
+#ifndef MONITOR_H_
+#define MONITOR_H_
 
 #include <string>
 #include <vector>
@@ -15,7 +15,7 @@ enum class VitalAlertLevel {
 };
 
 class Monitor {
-private:
+ private:
     std::string tempUnit;
     MessageHandler msgHandler;
     TemperatureConverter tempConverter;
@@ -32,7 +32,7 @@ private:
     // Function to display alert levels
     void displayAlertLevel(const std::string& message, VitalAlertLevel level);
 
-public:
+ public:
     Monitor(const std::string& language, const std::string& tempUnit);
     int vitalsOk(float temperature, float pulseRate, float spo2);
 
@@ -47,4 +47,4 @@ public:
     }
 };
 
-#endif
+#endif  // MONITOR_H_

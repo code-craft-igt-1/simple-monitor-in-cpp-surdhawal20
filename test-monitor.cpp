@@ -57,28 +57,28 @@ TEST_F(MonitorTest, NormalTemperature) {
 // Test critical pulse rate detection
 TEST_F(MonitorTest, CriticalPulseRate) {
     float criticalPulse = 120.0;  // Above the upper limit of 100
-    VitalAlertLevel level = monitor->checkValue(criticalPulse, 60.0, 100.0);
+    VitalAlertLevel level = monitor->testCheckValue(criticalPulse, 60.0, 100.0);
     ASSERT_EQ(level, VitalAlertLevel::CRITICAL);  // Should return CRITICAL
 }
 
 // Test normal pulse rate detection
 TEST_F(MonitorTest, NormalPulseRate) {
     float normalPulse = 75.0;  // Normal pulse rate
-    VitalAlertLevel level = monitor->checkValue(normalPulse, 60.0, 100.0);
+    VitalAlertLevel level = monitor->testCheckValue(normalPulse, 60.0, 100.0);
     ASSERT_EQ(level, VitalAlertLevel::OK);  // Should return OK
 }
 
 // Test warning SpO2 detection
 TEST_F(MonitorTest, WarningSpO2) {
     float warningSpO2 = 91.0;  // Close to the lower limit
-    VitalAlertLevel level = monitor->checkValue(warningSpO2, 90.0, 100.0);
+    VitalAlertLevel level = monitor->testCheckValue(warningSpO2, 90.0, 100.0);
     ASSERT_EQ(level, VitalAlertLevel::WARNING);  // Should return WARNING
 }
 
 // Test critical SpO2 detection
 TEST_F(MonitorTest, CriticalSpO2) {
     float criticalSpO2 = 85.0;  // Below the lower limit of 90
-    VitalAlertLevel level = monitor->checkValue(criticalSpO2, 90.0, 100.0);
+    VitalAlertLevel level = monitor->testCheckValue(criticalSpO2, 90.0, 100.0);
     ASSERT_EQ(level, VitalAlertLevel::CRITICAL);  // Should return CRITICAL
 }
 
