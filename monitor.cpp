@@ -39,9 +39,9 @@ VitalAlertLevel Monitor::checkTemperature(float temperature) {
 std::string Monitor::formatTemperature(float temperature) {
     if (tempUnit == "C") {
         temperature = tempConverter.convertToCelsius(temperature);
-        return tempConverter.to_string_custom(temperature) + " \u00B0C";
+        return to_string(temperature) + " \u00B0C";
     } else {
-        return tempConverter.to_string_custom(temperature) + " \u00B0F";
+        return to_string(temperature) + " \u00B0F";
     }
 }
 
