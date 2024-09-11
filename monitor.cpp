@@ -12,7 +12,7 @@ Monitor::Monitor(const std::string& language, const std::string& tempUnit)
 
 // Unified function to check if a value is within limits (including warning level)
 VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLimit) {
-    constexpr float WARNING_TOLERANCE = 0.985f;  // 1.5% below the upper limit
+    float WARNING_TOLERANCE = 1.5/100 * upperLimit ;
     if (value > upperLimit) {
         return VitalAlertLevel::CRITICAL;
     }
