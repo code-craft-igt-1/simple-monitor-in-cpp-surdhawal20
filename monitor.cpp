@@ -83,8 +83,7 @@ void Monitor::displayAlertLevel(const std::string& message, VitalAlertLevel leve
     if (level == VitalAlertLevel::CRITICAL) {
         cout << message << "\n";
         displayCriticalAlertAnimation();
-    }
-    else if (level == VitalAlertLevel::WARNING) {
+    } else if (level == VitalAlertLevel::WARNING) {
         cout << "Warning: " << message << "\n";
     }
 }
