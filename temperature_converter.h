@@ -12,4 +12,4 @@ class TemperatureConverter {
     std::string to_string_custom(T value);
 };
 
-#endif //TEMPERATURE_CONVERTER_H_
+#endif  // TEMPERATURE_CONVERTER_H_

@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include <tuple>
-#include "message_handler.h"
-#include "temperature_converter.h"
+#include "./message_handler.h"
+#include "./temperature_converter.h"
 
 // Enum for Vital alert levels
 enum class VitalAlertLevel {

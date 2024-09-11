@@ -15,9 +15,11 @@ VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLi
     constexpr float WARNING_TOLERANCE = 0.985f;  // 1.5% below the upper limit
     if (value > upperLimit) {
         return VitalAlertLevel::CRITICAL;
-    } if (value >= upperLimit * WARNING_TOLERANCE) {
+    } 
+    if (value >= upperLimit * WARNING_TOLERANCE) {
         return VitalAlertLevel::WARNING;
-    } if (value < lowerLimit) {
+    } 
+    if (value < lowerLimit) {
         return VitalAlertLevel::CRITICAL;
     }
     return VitalAlertLevel::OK;
@@ -41,7 +43,6 @@ std::string Monitor::formatTemperature(float temperature) {
     } else {
         return tempConverter.to_string_custom(temperature) + " °F";
     }
-   
 }
 
 // Function to display alert levels (with language translation)

@@ -5,7 +5,6 @@
 #include <map>
 
 class MessageHandler {
-
  private:
     std::string language;
     std::map<std::string, std::map<std::string, std::string>> messages;
@@ -15,4 +14,4 @@ class MessageHandler {
     std::string getMessage(const std::string& key);
 };
 
-#endif // MESSAGE_HANDLER_H_
+#endif  // MESSAGE_HANDLER_H_

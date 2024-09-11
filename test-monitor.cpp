@@ -3,7 +3,7 @@
 
 // Test Fixture for the Monitor class
 class MonitorTest : public ::testing::Test {
-protected:
+ protected:
     Monitor *monitor;  // Pointer to the Monitor object
 
     // Set up method that runs before each test
@@ -22,7 +22,7 @@ TEST_F(MonitorTest, ConvertToFahrenheit) {
     TemperatureConverter tempConverter;
     float tempC = 37.0;  // Normal human body temperature in Celsius
     float expectedF = 98.6;
-    ASSERT_NEAR(tempConverter.convertToFahrenheit(tempC), expectedF, 0.1);  // Allow small floating-point tolerance
+    ASSERT_NEAR(tempConverter.convertToFahrenheit(tempC), expectedF, 0.1);
 }
 
 // Test temperature conversion from Fahrenheit to Celsius
@@ -35,7 +35,7 @@ TEST_F(MonitorTest, ConvertToCelsius) {
 
 // Test critical temperature detection
 TEST_F(MonitorTest, CriticalTemperature) {
-    float criticalTempF = 103.0;  // Above the upper limit of 102.0°F
+    float criticalTempF = 103.0;  // Above the upper limit of 102.0 F
     VitalAlertLevel level = monitor->testCheckTemperature(criticalTempF);
     ASSERT_EQ(level, VitalAlertLevel::CRITICAL);  // Ensure it's flagged as critical
 }
