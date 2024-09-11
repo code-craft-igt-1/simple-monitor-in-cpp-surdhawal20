@@ -9,7 +9,7 @@ class TemperatureConverter {
     float convertToFahrenheit(float tempC);
     float convertToCelsius(float tempF);
     template<typename T>
-    std::string to_string_custom(T value);
+    // std::string to_string_custom(T value);
 };
 
 #endif  // TEMPERATURE_CONVERTER_H_
