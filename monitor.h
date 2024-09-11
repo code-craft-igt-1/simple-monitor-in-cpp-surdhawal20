@@ -45,6 +45,9 @@ class Monitor {
     VitalAlertLevel testCheckValue(float value, float lowerLimit, float upperLimit) {
         return checkValue(value, lowerLimit, upperLimit);
     }
+
+    template<typename T>
+    std::string to_string_custom(T value);
 };
 
 #endif  // MONITOR_H_

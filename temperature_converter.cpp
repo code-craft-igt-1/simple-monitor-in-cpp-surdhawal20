@@ -10,10 +10,3 @@ float TemperatureConverter::convertToCelsius(float tempF) {
     return (tempF - 32) * 5 / 9;
 }
 
-// Helper function to convert numbers to string
-/* template<typename T>
-std::string TemperatureConverter::to_string_custom(T value) {
-    std::ostringstream oss;
-    oss << value;
-    return oss.str(); */
-}

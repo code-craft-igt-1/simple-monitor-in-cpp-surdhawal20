@@ -35,13 +35,21 @@ VitalAlertLevel Monitor::checkTemperature(float temperature) {
     return checkValue(temperature, TEMPERATURE_LOWER_F, TEMPERATURE_UPPER_F);
 }
 
+// Helper function to convert numbers to string
+template<typename T>
+std::string Monitor::to_string_custom(T value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
 // Function to format temperature with the correct unit
 std::string Monitor::formatTemperature(float temperature) {
     if (tempUnit == "C") {
         temperature = tempConverter.convertToCelsius(temperature);
-        return to_string(temperature) + " \u00B0C";
+        return to_string_custom(temperature) + " \u00B0C";
     } else {
-        return to_string(temperature) + " \u00B0F";
+        return to_string_custom(temperature) + " \u00B0F";
     }
 }
 
