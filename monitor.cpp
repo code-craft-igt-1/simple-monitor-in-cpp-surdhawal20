@@ -10,22 +10,37 @@ using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 Monitor::Monitor(const std::string& language, const std::string& tempUnit)
     : msgHandler(language), tempUnit(tempUnit) {}
 
-// Unified function to check if a value is within limits (including warning level)
-VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLimit) {
-    float WARNING_TOLERANCE = 1.5/100 * upperLimit;
+// Helper function to check upper limit
+VitalAlertLevel checkUpperLimit(float value, float upperLimit, float tolerance) {
     if (value > upperLimit) {
         return VitalAlertLevel::CRITICAL;
     }
-    if (value >= lowerLimit && value <= (lowerLimit + WARNING_TOLERANCE)) {
+    if (value >= upperLimit - tolerance && value <= upperLimit) {
         return VitalAlertLevel::WARNING;
     }
-    if (value >= (upperLimit - WARNING_TOLERANCE) && value <= upperLimit) {
-        return VitalAlertLevel::WARNING;
-    }
+    return VitalAlertLevel::OK;
+}
+
+// Helper function to check lower limit
+VitalAlertLevel checkLowerLimit(float value, float lowerLimit, float tolerance) {
     if (value < lowerLimit) {
         return VitalAlertLevel::CRITICAL;
     }
+    if (value >= lowerLimit && value <= lowerLimit + tolerance) {
+        return VitalAlertLevel::WARNING;
+    }
     return VitalAlertLevel::OK;
+}
+
+// Unified function to check if a value is within limits (including warning level)
+VitalAlertLevel Monitor::checkValue(float value, float lowerLimit, float upperLimit) {
+    float tolerance = 0.015f * upperLimit;  // Tolerance as 1.5% of the upper limit
+
+    // Check both lower and upper limits
+    VitalAlertLevel lowerCheck = checkLowerLimit(value, lowerLimit, tolerance);
+    if (lowerCheck != VitalAlertLevel::OK) return lowerCheck;
+
+    return checkUpperLimit(value, upperLimit, tolerance);
 }
 
 // Function to check temperature specifically
@@ -33,9 +48,7 @@ VitalAlertLevel Monitor::checkTemperature(float temperature) {
     if (tempUnit == "C") {
         temperature = tempConverter.convertToFahrenheit(temperature);
     }
-    constexpr float TEMPERATURE_LOWER_F = 95.0;
-    constexpr float TEMPERATURE_UPPER_F = 102.0;
-    return checkValue(temperature, TEMPERATURE_LOWER_F, TEMPERATURE_UPPER_F);
+    return checkValue(temperature, 95.0f, 102.0f);
 }
 
 // Helper function to convert numbers to string
